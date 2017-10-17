@@ -4,7 +4,7 @@
 
 -----------------
 
-**Voltric** is an open source software library for clustering with Bayesian networks that is being developed by researchers of the Polythecnic University of Madrid. While still on early development, Voltric aspires at being an important tool in the Data science ecosystem. Voltric provides a framework for developing new algorithms based on Bayesian networks, it also their computational and interpreational advatanges to provide a set of already implemented methods that belong to the State of the art.
+**Voltric** is an open source software library for clustering with Bayesian networks that is being implemented by researchers of the Polythecnic University of Madrid. While still on early development, it aspires at becoming an important tool in the Data science ecosystem. Voltric provides an extensive framework for Probabilistic Graphical Models with a special focus on Bayesian networks. It equips the user with a set of state-of-the-art techniques and provide the basis for the creation of new ones.
 
 Acknowledgements
 -------------------
