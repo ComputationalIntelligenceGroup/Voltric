@@ -1,0 +1,3 @@
+Quizas este tipo de algoritmos deberia ir en paquetes especificos de clustering y clasificacion
+
+Ya que no pertenecen al core, el Hidden se usa en single-view clustering y el no hidden en clasifcacion

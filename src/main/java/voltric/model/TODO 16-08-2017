@@ -1,0 +1,7 @@
+Hay que seguir con la etrategia de los DataSets y hacer 3 modelos principales de red bayesiana que
+hereden lo minimo del abstracto:
+- DiscreteBayesNet
+- ContinuousBayesNet
+- HybridBayesNet
+
+y de esos tres surge una jerarquia de modelos especificos.

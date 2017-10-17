@@ -1,0 +1,229 @@
+package voltric.learning.structure;
+
+import voltric.data.DiscreteData;
+import voltric.learning.LearningResult;
+import voltric.model.DiscreteBayesNet;
+import voltric.variables.DiscreteVariable;
+
+/**
+ * Latent Variable cardinality search
+ *
+ * TODO: Por ahora estos metodos son externos al modelo, quizas podrian formar parte de el (o no si es demasiado)
+ * TODO: Revisar que los incrementos en las clase modelo s hacen correctamente (LTM vs BayesNet)
+ */
+public class LatentVariableCS {
+
+    /**
+     *
+     *
+     * @param bayesNet
+     * @param max
+     * @param dataSet
+     * @param parameterLearning
+     * @return
+     */
+    public static LearningResult<DiscreteBayesNet> bestCardinalityIncrease(DiscreteBayesNet bayesNet, int max, DiscreteData dataSet, DiscreteLearning parameterLearning){
+        DiscreteBayesNet bestCardinalityIncreased = null;
+
+        for(DiscreteVariable latVar: bayesNet.getLatentVariables())
+            bestCardinalityIncreased = bestCardinalityIncrease(bestCardinalityIncreased, latVar, max, dataSet, parameterLearning);
+
+        return new LearningResult<>()bestCardinalityIncreased;
+    }
+
+    /**
+     *
+     *
+     * @param bayesNet
+     * @param latentVar
+     * @param max
+     * @param dataSet
+     * @param parameterLearning
+     * @return
+     */
+    public static DiscreteBayesNet bestCardinalityIncrease(DiscreteBayesNet bayesNet, DiscreteVariable latentVar, int max, DiscreteData dataSet, DiscreteLearning parameterLearning){
+        if(!bayesNet.getLatentVariables().contains(latentVar))
+            throw new IllegalArgumentException("The argument variable must be a latent variable and belong to the bayesNet");
+
+        DiscreteBayesNet bestModel = null;
+
+        for(int i = 0; (latentVar.getCardinality() + i) <= max ; i++ ){
+
+            DiscreteBayesNet newModel = bayesNet.increaseCardinality(latentVar, i);
+            newModel = parameterLearning.learnModel(newModel, dataSet);
+
+            if(bestModel == null)
+                bestModel = newModel;
+            else if(bestModel.getBICScore(dataSet) < newModel.getBICScore(dataSet)) { // BIC score is a negative score
+                bestModel = newModel;
+            }
+        }
+
+        return bestModel;
+    }
+
+    /**
+     *
+     *
+     * @param bayesNet
+     * @param min
+     * @param dataSet
+     * @param parameterLearning
+     * @return
+     */
+    public static DiscreteBayesNet bestCardinalityDecrease(DiscreteBayesNet bayesNet, int min, DiscreteData dataSet, DiscreteLearning parameterLearning){
+        if(min < 2)
+            throw new IllegalArgumentException("min >= 2");
+
+        DiscreteBayesNet bestCardinalityDecreased = null;
+
+        for(DiscreteVariable latVar: bayesNet.getLatentVariables())
+            bestCardinalityDecreased = bestCardinalityDecrease(bestCardinalityDecreased, latVar, min, dataSet, parameterLearning);
+
+        return bestCardinalityDecreased;
+    }
+
+    /**
+     *
+     *
+     * @param bayesNet
+     * @param latentVar
+     * @param min
+     * @param dataSet
+     * @param parameterLearning
+     * @return
+     */
+    public static DiscreteBayesNet bestCardinalityDecrease(DiscreteBayesNet bayesNet, DiscreteVariable latentVar, int min, DiscreteData dataSet, DiscreteLearning parameterLearning){
+        if(min < 2)
+            throw new IllegalArgumentException("min >= 2");
+
+        if(!bayesNet.getLatentVariables().contains(latentVar))
+            throw new IllegalArgumentException("The argument variable must be a latent variable and belong to the bayesNet");
+
+        DiscreteBayesNet bestModel = null;
+
+        for(int i = 0; (latentVar.getCardinality() - i) >= min; i++ ){
+
+            DiscreteBayesNet newModel = bayesNet.decreaseCardinality(latentVar, i);
+            newModel = parameterLearning.learnModel(newModel, dataSet);
+
+            if(bestModel == null)
+                bestModel = newModel;
+            else if(bestModel.getBICScore(dataSet) < newModel.getBICScore(dataSet)) { // BIC score is a negative score
+                bestModel = newModel;
+            }
+        }
+
+        return bestModel;
+    }
+
+    /**
+     *
+     *
+     * @param bayesNet
+     * @param max
+     * @param dataSet
+     * @param parameterLearning
+     * @return
+     */
+    public static DiscreteBayesNet greedyCardinalityIncrease(DiscreteBayesNet bayesNet, int max, DiscreteData dataSet, DiscreteLearning parameterLearning){
+        DiscreteBayesNet greedyCardinalityIncreased = null;
+
+        for(DiscreteVariable latVar: bayesNet.getLatentVariables())
+            greedyCardinalityIncreased = greedyCardinalityIncrease(greedyCardinalityIncreased, latVar, max, dataSet, parameterLearning);
+
+        return greedyCardinalityIncreased;
+    }
+
+    /**
+     *
+     *
+     * @param bayesNet
+     * @param latentVar
+     * @param max
+     * @param dataSet
+     * @param parameterLearning
+     * @return
+     */
+    public static DiscreteBayesNet greedyCardinalityIncrease(DiscreteBayesNet bayesNet, DiscreteVariable latentVar, int max, DiscreteData dataSet, DiscreteLearning parameterLearning){
+        if(!bayesNet.getLatentVariables().contains(latentVar))
+            throw new IllegalArgumentException("The argument variable must be a latent variable and belong to the bayesNet");
+
+        DiscreteBayesNet bestModel = null;
+
+        for(int i = 0; (latentVar.getCardinality() + i) <= max ; i++ ){
+
+            DiscreteBayesNet newModel = bayesNet.increaseCardinality(latentVar, i);
+            newModel = parameterLearning.learnModel(newModel, dataSet);
+
+            if(bestModel == null)
+                bestModel = newModel;
+            // If there isn't an score improvement
+            else if(bestModel.getBICScore(dataSet) >= newModel.getBICScore(dataSet)) // BIC score is a negative score
+                return bestModel;
+            // If there is an score improvement
+            else
+                bestModel = newModel;
+        }
+
+        return bestModel;
+    }
+
+    /**
+     *
+     *
+     * @param bayesNet
+     * @param min
+     * @param dataSet
+     * @param parameterLearning
+     * @return
+     */
+    public static DiscreteBayesNet greedyCardinalityDecrease(DiscreteBayesNet bayesNet, int min, DiscreteData dataSet, DiscreteLearning parameterLearning){
+        if(min < 2)
+            throw new IllegalArgumentException("min >= 2");
+
+        DiscreteBayesNet greedyCardinalityDecreased = null;
+
+        for(DiscreteVariable latVar: bayesNet.getLatentVariables())
+            greedyCardinalityDecreased = greedyCardinalityDecrease(greedyCardinalityDecreased, latVar, min, dataSet, parameterLearning);
+
+        return greedyCardinalityDecreased;
+    }
+
+    /**
+     *
+     *
+     * @param bayesNet
+     * @param latentVar
+     * @param min
+     * @param dataSet
+     * @param parameterLearning
+     * @return
+     */
+    public static DiscreteBayesNet greedyCardinalityDecrease(DiscreteBayesNet bayesNet, DiscreteVariable latentVar, int min, DiscreteData dataSet, DiscreteLearning parameterLearning){
+        if(min < 2)
+            throw new IllegalArgumentException("min >= 2");
+
+        if(!bayesNet.getLatentVariables().contains(latentVar))
+            throw new IllegalArgumentException("The argument variable must be a latent variable and belong to the bayesNet");
+
+        DiscreteBayesNet bestModel = null;
+
+        for(int i = 0; (latentVar.getCardinality() - i) >= min; i++ ){
+
+            DiscreteBayesNet newModel = bayesNet.decreaseCardinality(latentVar, i);
+            newModel = parameterLearning.learnModel(newModel, dataSet);
+
+            if(bestModel == null)
+                bestModel = newModel;
+            // If there isn't an score improvement
+            else if(bestModel.getBICScore(dataSet) >= newModel.getBICScore(dataSet)) // BIC score is a negative score
+                return bestModel;
+            // If there is an score improvement
+            else
+                bestModel = newModel;
+        }
+
+        return bestModel;
+    }
+}

@@ -1,0 +1,17 @@
+TODO: 03-09-2017
+
+Basicamente hay que eliminar el metodo
+
+AbstractNode<T> addNode(AbstractNode<T> node);
+
+Este metodo nos da varios problemas porque al ser publico y utilizarse en los grafos Weighted y en las BayesNet juntamos
+dos tipos de estructuras que no deberian estar relacionadas directamente. Siguiendo los pasos anteriores
+de dividir las funciones de cada clase, lo que se hara es definir un "Envelope" para los nodos del grafo, dichos
+envoltorios (composite pattern) no dependeran de la jerarquia de DirectedNode<T>
+
+Solo se pueden crear nodos pasandoles como argumento el contenido, nunca pasando una referencia de otro nodo,
+sigue aspectos de inmutabilidad.
+
+Cambio: Actualmente solo se utiliza en DiscreteBayesNet, lo que me da mas razones para eliminar dicho metodo y cambiar las cosas
+Ademas que da pie a nuevos tipos de estructuras como son los diagramas de influencia, etc. Y en un futuro puede
+que permita la introducion de nuevos modelos o de incluir mas restricciones como Conjugate Expontential models

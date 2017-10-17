@@ -1,0 +1,5 @@
+PAsarlo a ser un objeto con jerarquias? ayudaria a las comparativas, ya que ambos valores deberian ser del
+mismo tipo y se podria implementar metodos equals, greater y demas, independientemente del signo
+
+Es importante porque tmb podria tener un valor minimo que dependiendo del tipo de score puede ser negativo o positivo
+Lo cual cambiaria todos los metodos de aprendizaje.
