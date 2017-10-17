@@ -10,3 +10,8 @@ Acknowledgements
 -------------------
 
 This work is being financed by the Fundación BBVA grants to Scientific Research Teams in Big Data 2016.
+
+Warning
+-------------------
+
+This repository is a more public version of this one: https://github.com/ferjorosa/Voltric
